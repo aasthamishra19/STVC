@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text-to-Speech Converter</title>
+  <style>
+    body {
+      font-family: algerian;
+      background-color: pink;
+      color: black;
+      margin: 10px;
+      padding: 10px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: snow;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgb(2, 35, 134);
+      border-radius: 6px;
+    }
+
+    select, input[type="range"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: palevioletred;
+      color: black;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: paleturquoise;
+    }
+
+    .error-para {
+      color: rgb(102, 2, 2);
+      text-align: center;
+      margin-top: 10px;
+    }
+
+   
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Text-to-Speech Converter</h1>
+    <textarea id="textToConvert" placeholder="Enter text to convert"></textarea>
+    <label for="voiceSelect">Select Voice:</label>
+    <select id="voiceSelect"></select>
+    <label for="volumeControl">Volume:</label>
+    <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1">
+    <label for="rateControl">Rate:</label>
+    <input type="range" id="rateControl" min="0.5" max="2" step="0.1" value="1">
+    <label for="pitchControl">Pitch:</label>
+    <input type="range" id="pitchControl" min="0" max="2" step="0.1" value="1">
+    <button id="convertBtn">Convert to Speech</button>
+    <p class="error-para" id="errorPara"></p>
+    
+  </div>
+  <script>
+    const text = document.getElementById("textToConvert");
+    const convertBtn = document.getElementById("convertBtn");
+    const errorPara = document.getElementById("errorPara");
+    const voiceSelect = document.getElementById("voiceSelect");
+    const volumeControl = document.getElementById("volumeControl");
+    const rateControl = document.getElementById("rateControl");
+    const pitchControl = document.getElementById("pitchControl");
+   
+
+    const speechSynth = window.speechSynthesis;
+
+    function populateVoiceList() {
+      const voices = speechSynth.getVoices();
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    populateVoiceList();
+    if (speechSynth.onvoiceschanged !== undefined) {
+      speechSynth.onvoiceschanged = populateVoiceList;
+    }
+
+  
+
+    convertBtn.addEventListener('click', function () {
+      const enteredText = text.value.trim();
+
+      if (!enteredText) {
+        errorPara.textContent = "Nothing to Convert! Enter text in the text area.";
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(enteredText);
+      const selectedVoice = speechSynth.getVoices()[voiceSelect.value];
+      utterance.voice = selectedVoice;
+      utterance.volume = volumeControl.value;
+      utterance.rate = rateControl.value;
+      utterance.pitch = pitchControl.value;
+
+      speechSynth.speak(utterance);
+
+      convertBtn.textContent = "Playing...";
+     3333 convertBtn.disabled = true;
+
+      utterance.onend = function() {
+        convertBtn.textContent = "Convert to Speech";
+        convertBtn.disabled = false;
+      };
+k
+    });
+  </script>
+</body>
+</html>
+u
